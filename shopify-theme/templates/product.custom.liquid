@@ -1,0 +1,30 @@
+{% comment %} Plantilla personalizada de producto {% endcomment %}
+
+{% layout 'product' %}
+
+<div class="custom-product-wrapper">
+  <h1>{{ product.title }}</h1>
+  <h3>This is a custom theme!</h3>
+  <img id="base-product-image" src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }}" />
+
+  <form method="post" action="/cart/add">
+    <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+
+    {% if product.options.size > 0 %}
+      {% for option in product.options_with_values %}
+        <label>{{ option.name }}</label>
+        <select name="options[{{ option.name }}]">
+          {% for value in option.values %}
+            <option value="{{ value }}">{{ value }}</option>
+          {% endfor %}
+        </select>
+      {% endfor %}
+    {% endif %}
+
+    <button type="submit">Añadir al carrito</button>
+  </form>
+</div>
+
+<script src="{{ 'customizer.js' | asset_url }}"></script>
+<script src="{{ 'feature_flags.js' | asset_url }}"></script>
+
