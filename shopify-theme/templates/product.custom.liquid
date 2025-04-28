@@ -1,30 +1,152 @@
-{% comment %} Plantilla personalizada de producto {% endcomment %}
+{% comment %} Plantilla personalizada para camisetas planas con estilo pro {% endcomment %}
 
 {% layout 'product' %}
 
+<script>
+  console.log('Producto:', {{ product | json }});
+</script>
+
 <div class="custom-product-wrapper">
-  <h1>{{ product.title }}</h1>
-  <h3>This is a custom theme!</h3>
-  <img id="base-product-image" src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }}" />
+  {% if product.featured_image %}
+    <div class="product-image">
+      <img
+        id="base-product-image"
+        src="{{ product.featured_image | img_url: '400x400', crop: 'center' }}"
+        width="280"
+        height="320"
+        alt="{{ product.title }}"
+      >
+    </div>
+  {% endif %}
 
-  <form method="post" action="/cart/add">
-    <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+  <h1 class="product-title">{{ product.title }}</h1>
+  <p class="product-price">{{ product.price | money }}</p>
 
-    {% if product.options.size > 0 %}
-      {% for option in product.options_with_values %}
-        <label>{{ option.name }}</label>
-        <select name="options[{{ option.name }}]">
-          {% for value in option.values %}
-            <option value="{{ value }}">{{ value }}</option>
-          {% endfor %}
-        </select>
-      {% endfor %}
-    {% endif %}
+  <form method="post" action="/cart/add" class="product-form" id="product-form">
+    <input type="hidden" name="id" id="variant-id" value="{{ product.variants.first.id }}">
 
-    <button type="submit">Añadir al carrito</button>
+    {% for option in product.options_with_values %}
+      {% if option.name == 'Talla' %}
+        <div class="variant-options">
+          <label>{{ option.name }}</label>
+          <div class="option-buttons">
+            {% for value in option.values %}
+              <button
+                type="button"
+                class="option-button"
+                data-value="{{ value }}"
+                data-option-index="{{ forloop.parentloop.index0 }}"
+              >
+                {{ value }}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="quantity-wrapper">
+      <label for="quantity">Quantity</label>
+      <div class="quantity-controls">
+        <button type="button" id="decrease-qty">-</button>
+        <input type="number" id="quantity" name="quantity" value="1" min="1">
+        <button type="button" id="increase-qty">+</button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn add-to-cart">Add to cart</button>
+    <button type="submit" formaction="/checkout" class="btn buy-now">Buy it now</button>
   </form>
+
+  <div class="product-description">
+    {{ product.description }}
+  </div>
 </div>
 
-<script src="{{ 'customizer.js' | asset_url }}"></script>
-<script src="{{ 'feature_flags.js' | asset_url }}"></script>
+<script src="{{ 'customizer.js' | asset_url }}" defer></script>
+<script src="{{ 'feature_flags.js' | asset_url }}" defer></script>
 
+<style>
+  .custom-product-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  .product-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .product-title {
+    font-size: 2rem;
+    margin-top: 1rem;
+  }
+  .product-price {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    font-weight: bold;
+  }
+  .variant-options {
+    margin-bottom: 1.5rem;
+  }
+  .option-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .option-button {
+    border: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    background: white;
+    cursor: pointer;
+  }
+  .option-button.active {
+    background: black;
+    color: white;
+    border-color: black;
+  }
+  .quantity-wrapper {
+    margin-bottom: 1.5rem;
+  }
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+  }
+  .quantity-controls button {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+  }
+  .quantity-controls input {
+    width: 60px;
+    text-align: center;
+    margin: 0 10px;
+    font-size: 16px;
+  }
+  .btn {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  .add-to-cart {
+    background-color: white;
+    border: 2px solid black;
+    color: black;
+  }
+  .buy-now {
+    background-color: black;
+    color: white;
+    border: none;
+  }
+</style>
