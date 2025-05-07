@@ -77,7 +77,7 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "Featured products",
+        "title": "Productos destacados",
         "heading_size": "h2",
         "collection": "all",
         "products_to_show": 8,
@@ -85,7 +85,7 @@
         "color_scheme": "scheme-1",
         "show_view_all": false,
         "swipe_on_mobile": false,
-        "image_ratio": "adapt",
+        "image_ratio": "square",
         "show_secondary_image": true,
         "show_vendor": false,
         "show_rating": false,
