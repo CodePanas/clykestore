@@ -4,6 +4,7 @@
 
 <script>
   console.log('Producto:', {{ product | json }});
+  const variants = {{ product.variants | json }};
 </script>
 
 <div class="product-page-grid">
